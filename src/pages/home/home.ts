@@ -13,6 +13,6 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-    this.ubiService.listDevices();
+    this.ubiService.getDevices();
   }
 }
