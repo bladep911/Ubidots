@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '../http-client/http.client';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/map';
+import Rx from 'rxjs/Rx';
+import {Subject} from 'rxjs/Subject';
 import {IoTDevice, IoTVariable} from "../../model";
 
 /*
@@ -29,33 +28,32 @@ export class UbiServiceProvider {
         this.variableUrl = this.baseUbiUrl + 'variables';
     }
 
-    /*get devices
-    private initServiceUrls() {
-        this.httpClient.get(this.baseUbiUrl, this.token,
-            response => {
-                let data = response.json();
-                this.deviceUrl = data.datasources;
-                this.variableUrl = data.variables;
-                console.log(`## Url received ## -> \n\t ${this.deviceUrl} \n\t${this.variableUrl}`);
-            });
-    }*/
-
-
     public getDevices(forceFetch: boolean = false) {
-        if (this.devices == null || forceFetch) {
-            console.log(`## Device url ## -> `, this.deviceUrl);
-            return this.httpClient.get(this.deviceUrl, this.token,
-                response => {
-                    let data = response.json().results;
-                    this.devices = data;
-                    console.log(`## Device Received ## -> `, this.devices);
-                });
+        //create observable source
+        var obserSource = new Subject<IoTDevice[]>();
+        var localData = localStorage.getItem('ubi-devices');
+
+        if (!forceFetch && (this.devices != null || localData != null)) {
+            if (this.devices == null)
+                this.devices = JSON.parse(localData);
+            console.log(`## DEVICE GET FROM STORAGE ##`);
+            return Rx.Observable.of(this.devices);
         }
-        console.log('## DEVICES FROM CACHE ##');
-        return Observable.of(this.devices);
+
+        //rest get to service
+        this.httpClient.get(this.deviceUrl, this.token,
+            response => {
+                console.log(`## DEVICE RECEIVED FROM SERVICE ##`);
+                this.devices = response.json().results;
+                localStorage.setItem('ubi-devices', JSON.stringify(this.devices));
+                obserSource.next(this.devices);
+                obserSource.complete();
+            });
+
+        return obserSource.asObservable();
     }
 
-    private getVariables() {
+    getVariables() {
         this.httpClient.get(this.deviceUrl, this.token,
             response => {
                 let data = response.json();

@@ -1,11 +1,17 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>
-      My IoT App
-    </ion-title>
-  </ion-navbar>
+    <ion-navbar>
+        <ion-title>
+            My IoT App
+        </ion-title>
+    </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-    <button ion-button (click)="openDevice()">Device</button>
+    <ion-list>
+        <button ion-item *ngFor="let d of deviceList" (click)="deviceSelected(d)">
+            <h2>{{d.name}}</h2>
+            <h3>Last Contact {{d.last_activity}}</h3>
+            <p>Number of Variables {{d.number_of_variables}}</p>
+        </button>
+    </ion-list>
 </ion-content>
