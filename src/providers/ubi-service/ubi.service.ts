@@ -1,7 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '../http-client/http.client';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/map';
-import {IoTVarValue, IoTDevice, IoTVariable} from "../../model";
+import {IoTDevice, IoTVariable} from "../../model";
 
 /*
   Generated class for the UbiServiceProvider provider.
@@ -22,10 +24,12 @@ export class UbiServiceProvider {
     private variables: IoTVariable[];
 
     constructor(public httpClient: HttpClient) {
-        this.initServiceUrls();
+        //this.initServiceUrls();
+        this.deviceUrl = this.baseUbiUrl + 'datasources';
+        this.variableUrl = this.baseUbiUrl + 'variables';
     }
 
-    //get devices
+    /*get devices
     private initServiceUrls() {
         this.httpClient.get(this.baseUbiUrl, this.token,
             response => {
@@ -34,29 +38,30 @@ export class UbiServiceProvider {
                 this.variableUrl = data.variables;
                 console.log(`## Url received ## -> \n\t ${this.deviceUrl} \n\t${this.variableUrl}`);
             });
+    }*/
+
+
+    public getDevices(forceFetch: boolean = false) {
+        if (this.devices == null || forceFetch) {
+            console.log(`## Device url ## -> `, this.deviceUrl);
+            return this.httpClient.get(this.deviceUrl, this.token,
+                response => {
+                    let data = response.json().results;
+                    this.devices = data;
+                    console.log(`## Device Received ## -> `, this.devices);
+                });
+        }
+        console.log('## DEVICES FROM CACHE ##');
+        return Observable.of(this.devices);
     }
 
-    public getDevices() {
-
-        if
-
-
-        this.httpClient.get(this.deviceUrl, this.token,
-            response => {
-                let data = response.json();
-                this.devices = data;
-                this.getVariables();
-                console.log(`## Device Received ${this.devices.length}## -> `, this.devices);
-            });
-    }
-
-    private getVariables(){
+    private getVariables() {
         this.httpClient.get(this.deviceUrl, this.token,
             response => {
                 let data = response.json();
                 this.variables = data;
                 console.log(`## Variables Received ${this.variables.length} ## -> `, this.variables);
-        });
+            });
     }
 }
 

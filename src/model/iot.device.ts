@@ -1,4 +1,4 @@
-import {IoTVariable, IoTVarValue} from './iot.variable';
+import {IoTVariable} from './iot.variable';
 
 /* Device Example
 {
