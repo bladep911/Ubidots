@@ -6,11 +6,11 @@ import {DevicePage} from '../device/device';
 
 @Component({
     selector: 'page-home',
-    templateUrl: 'home.html'
+    templateUrl: 'home.html',
 })
 export class HomePage implements OnInit {
 
-    private iotDevices: IoTDevice[];
+    private iotDevices: IoTDevice[][];
 
     constructor(public navCtrl: NavController, public ubiService: UbiServiceProvider) {
 
@@ -19,9 +19,18 @@ export class HomePage implements OnInit {
     ngOnInit() {
         console.log('## PAGE HOME - GET DEVICES##');
         this.ubiService.getDevices().subscribe(
-            devices => { this.iotDevices = devices; },
+            devices => { this.setDevices(devices); },
             error => {console.log("Home page error getting devices:", error.message);}
         );
+    }
+
+    private setDevices(devices:IoTDevice[]){
+        this.iotDevices = [];
+        for (let i=0; i<devices.length; i++) {
+            let tmp: IoTDevice[] = [devices[i++]];
+            if (i < devices.length) tmp.push(devices[i]);
+            this.iotDevices.push(tmp);
+        }
     }
 
     selectDevice(selectedDevice): void {

@@ -1,17 +1,21 @@
 <ion-header>
     <ion-navbar>
         <ion-title>
-            My IoT App
+            <i class="fa fa-cloud" aria-hidden="true" ></i>
+            IoT Devices
         </ion-title>
     </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-    <ion-list>
-        <button ion-item *ngFor="let d of this.iotDevices" (click)="selectDevice(d)">
-            <h2>{{d.name}}</h2>
-            <h3>Number of Variables {{d.number_of_variables}}</h3>
-            <h4>Last Contact {{d.last_activity | unixMoment | amDateFormat:"L LTS"}}</h4>
-        </button>
-    </ion-list>
+<ion-content>
+    <ion-grid>
+       <ion-row *ngFor="let devgrp of this.iotDevices" >
+            <ion-col>
+                <device-card [device]="devgrp[0]" (click)="selectDevice(devgrp[0])"></device-card>
+            </ion-col>
+            <ion-col *ngIf="devgrp.length > 1">
+                <device-card [device]="devgrp[1]" (click)="selectDevice(devgrp[1])"></device-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>

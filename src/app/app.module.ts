@@ -11,12 +11,14 @@ import {DevicePage} from '../pages/device/device';
 import {UbiServiceProvider} from '../providers/ubi-service/ubi.service';
 import { MomentModule } from 'angular2-moment';
 import {PipesModule} from '../pipes/pipes.module';
+import {DeviceCardComponent} from "../components/device-card/device-card";
 
 @NgModule({
     declarations: [
         MyApp,
         HomePage,
-        DevicePage
+        DevicePage,
+        DeviceCardComponent
     ],
     imports: [
         BrowserModule,
