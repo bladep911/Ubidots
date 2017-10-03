@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {UbiServiceProvider} from "../../providers/ubi-service/ubi.service";
-import {DevicePage} from "../device/device";
 import {IoTDevice} from '../../model';
+import {DevicePage} from '../device/device';
 
 @Component({
     selector: 'page-home',
@@ -10,27 +10,22 @@ import {IoTDevice} from '../../model';
 })
 export class HomePage implements OnInit {
 
-    private deviceList: IoTDevice[];
+    private iotDevices: IoTDevice[];
 
     constructor(public navCtrl: NavController, public ubiService: UbiServiceProvider) {
 
     }
 
     ngOnInit() {
-        console.log('## HOME GET DEVICES ##');
+        console.log('## PAGE HOME - GET DEVICES##');
         this.ubiService.getDevices().subscribe(
-            devices => {
-                this.deviceList = devices;
-            }
+            devices => { this.iotDevices = devices; },
+            error => {console.log("Home page error getting devices:", error.message);}
         );
     }
 
-    openDevice(): void {
-        this.navCtrl.push(DevicePage);
-    }
-
-    deviceSelected(device): void {
-
+    selectDevice(selectedDevice): void {
+        this.navCtrl.push( DevicePage, {device: selectedDevice});
     }
 
 }

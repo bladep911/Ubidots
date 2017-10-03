@@ -8,10 +8,10 @@
 
 <ion-content padding>
     <ion-list>
-        <button ion-item *ngFor="let d of deviceList" (click)="deviceSelected(d)">
+        <button ion-item *ngFor="let d of this.iotDevices" (click)="selectDevice(d)">
             <h2>{{d.name}}</h2>
-            <h3>Last Contact {{d.last_activity}}</h3>
-            <p>Number of Variables {{d.number_of_variables}}</p>
+            <h3>Number of Variables {{d.number_of_variables}}</h3>
+            <h4>Last Contact {{d.last_activity | unixMoment | amDateFormat:"L LTS"}}</h4>
         </button>
     </ion-list>
 </ion-content>

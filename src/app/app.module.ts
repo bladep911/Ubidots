@@ -9,6 +9,8 @@ import {MyApp} from './app.component';
 import {HomePage} from '../pages/home/home';
 import {DevicePage} from '../pages/device/device';
 import {UbiServiceProvider} from '../providers/ubi-service/ubi.service';
+import { MomentModule } from 'angular2-moment';
+import {PipesModule} from '../pipes/pipes.module';
 
 @NgModule({
     declarations: [
@@ -19,7 +21,9 @@ import {UbiServiceProvider} from '../providers/ubi-service/ubi.service';
     imports: [
         BrowserModule,
         HttpModule,
-        IonicModule.forRoot(MyApp)
+        IonicModule.forRoot(MyApp),
+        MomentModule,
+        PipesModule
     ],
     bootstrap: [IonicApp],
     entryComponents: [

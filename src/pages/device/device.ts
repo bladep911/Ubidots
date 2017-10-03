@@ -18,18 +18,14 @@ import {IoTDevice} from '../../model';
 })
 export class DevicePage implements OnInit {
 
+    private selectedDevice: IoTDevice;
+
     constructor(public navCtrl: NavController, public navParams: NavParams, private ubiService: UbiServiceProvider) {
+        this.selectedDevice=navParams.get('device');
     }
 
     ngOnInit() {
-        this.ubiService.getDevices().subscribe(
-            devices => {
-                for (let i in devices){
-                    let dev:IoTDevice = devices[i];
-                    console.log(`Device #${i}: ${dev.name}`);
-                }
-            }
-        );
+
     }
 
     backHome() {
