@@ -1,0 +1,10 @@
+<ion-card>
+    <ion-item>
+        <!--<i class="fa fa-star-o" aria-hidden="true" item-start></i>-->
+        <h2>{{this.device.name}}</h2>
+        <p>Has {{this.device.number_of_variables}} variables</p>
+    </ion-item>
+    <ion-card-content>
+        <p>Last activity<br>{{this.device.last_activity | unixMoment | amDateFormat:"L LTS"}}</p>
+    </ion-card-content>
+</ion-card>

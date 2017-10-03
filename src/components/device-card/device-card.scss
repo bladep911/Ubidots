@@ -1,0 +1,11 @@
+device-card {
+    ion-card-content > p {
+        color:gray !important;
+        font-size: 0.7em;
+    }
+
+    ion-item{
+        border-bottom: 1px solid lightgray !important;
+        margin-bottom: 1em !important;
+    }
+}
