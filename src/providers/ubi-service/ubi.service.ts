@@ -37,21 +37,27 @@ export class UbiServiceProvider {
      */
     public getDevices(forceFetch: boolean = false): Observable<IoTDevice[]> {
         //create observable source
-        var obserSource = new Subject<IoTDevice[]>();
-        var localData = localStorage.getItem('ubi-devices');
 
-        //console.log(`Connection Type ${this.network.type}`);
-        this.checkNetwork();
+        var obserNetwork = this.checkNetwork();
+        return obserNetwork.flatMap(
+            connected => {
+                if (connected) {
+                    //if connected try to get update data
+                    var localData = localStorage.getItem('ubi-devices');
+                    if (this.devices != null || localData != null) {
+                        if (this.devices == null)
+                            this.devices = JSON.parse(localData);
 
-        if (!forceFetch && (this.devices != null || localData != null)) {
-            if (this.devices == null)
-                this.devices = JSON.parse(localData);
-
-            console.log(`## DEVICE GET FROM STORAGE ##`);
-            return Rx.Observable.of(this.devices);
-        }
-
-        return this.loadDevices(obserSource)
+                        console.log(`## DEVICE GET FROM STORAGE ##`);
+                        return Rx.Observable.of(this.devices);
+                    }
+                    return Rx.Observable.of([]);
+                } else {
+                    // get from cache
+                    console.log(`## DEVICE GET FROM SERVICE ##`);
+                    return this.loadDevices();
+                }
+            });
     }
 
     /**
@@ -59,7 +65,9 @@ export class UbiServiceProvider {
      * @param {Subject<IoTDevice[]>} observable source where to add service response
      * @returns {Observable<IoTDevice[]>} observable containing the device list
      */
-    private loadDevices(source: Subject<IoTDevice[]>): Observable<IoTDevice[]>{
+    private loadDevices(): Observable<IoTDevice[]>{
+        var source = new Subject<IoTDevice[]>();
+
         this.httpClient.get(`${this.baseUbiUrl}datasources`, this.token,
             response => {
                 console.log(`## DEVICE RECEIVED FROM SERVICE ##`);
@@ -72,11 +80,14 @@ export class UbiServiceProvider {
         return source.asObservable();
     }
 
-    checkNetwork() {
-        console.log("Network Type: "+ this.network.type)
+    private checkNetwork() {
+        var connected = new Subject<boolean>();
         this.platform.ready().then(() => {
             console.log("Network Type: "+ this.network.type);
+            connected.next(this.network.type == 'none');
+            connected.complete();
         });
+        return connected.asObservable();
     }
 }
 

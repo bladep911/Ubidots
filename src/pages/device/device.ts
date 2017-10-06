@@ -25,7 +25,11 @@ export class DevicePage implements OnInit {
     }
 
     ngOnInit() {
-
+        console.log('## PAGE HOME - GET DEVICES##');
+        this.ubiService.getDevices().subscribe(
+            devices => { console.log("Device Get Success:"); },
+            error => {console.log("Home page error getting devices:", error.message);}
+        );
     }
 
     backHome() {
