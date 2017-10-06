@@ -4,7 +4,12 @@ import Rx from 'rxjs/Rx';
 import {Subject} from 'rxjs/Subject';
 import {IoTDevice, IoTVariable} from "../../model";
 import {Observable} from "rxjs/Observable";
+import {Network} from "@ionic-native/network";
+import {Platform} from "ionic-angular";
 
+
+declare var navigator: any;
+declare var Connection: any;
 /*
   Generated class for the UbiServiceProvider provider.
 
@@ -21,22 +26,22 @@ export class UbiServiceProvider {
     private devices: IoTDevice[];
     private variables: IoTVariable[];
 
-    constructor(public httpClient: HttpClient) {
-        //this.initServiceUrls();
-//        this.deviceUrl = this.baseUbiUrl + 'datasources';
-//        this.variableUrl = this.baseUbiUrl + 'variables';
-    }
+    constructor( public httpClient: HttpClient, public network: Network, public platform: Platform) {
 
+    }
 
     /**
      * /return device stored by the application
      * @param {boolean} forceFetch force the reloading of the devices
-     * @returns {Observable<IoTDevice[]>} observable containing the device list
+     * @returtns {Observable<IoTDevice[]>} observable containing the device list
      */
     public getDevices(forceFetch: boolean = false): Observable<IoTDevice[]> {
         //create observable source
         var obserSource = new Subject<IoTDevice[]>();
         var localData = localStorage.getItem('ubi-devices');
+
+        //console.log(`Connection Type ${this.network.type}`);
+        this.checkNetwork();
 
         if (!forceFetch && (this.devices != null || localData != null)) {
             if (this.devices == null)
@@ -67,15 +72,11 @@ export class UbiServiceProvider {
         return source.asObservable();
     }
 
-
- /*   getVariables() {
-        this.httpClient.get(this.deviceUrl, this.token,
-            response => {
-                let data = response.json();
-                this.variables = data;
-                console.log(`## Variables Received ${this.variables.length} ## -> `, this.variables);
-            });
+    checkNetwork() {
+        console.log("Network Type: "+ this.network.type)
+        this.platform.ready().then(() => {
+            console.log("Network Type: "+ this.network.type);
+        });
     }
-    */
 }
 

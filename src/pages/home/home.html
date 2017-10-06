@@ -11,11 +11,11 @@
     <ion-grid>
        <ion-row *ngFor="let devgrp of this.iotDevices" >
             <ion-col>
-                <device-card [device]="devgrp[0]" (click)="selectDevice(devgrp[0])"></device-card>
+                <device-card [device]="devgrp" (click)="selectDevice(devgrp)"></device-card>
             </ion-col>
-            <ion-col *ngIf="devgrp.length > 1">
+<!--            <ion-col *ngIf="devgrp.length > 1">
                 <device-card [device]="devgrp[1]" (click)="selectDevice(devgrp[1])"></device-card>
-            </ion-col>
+            </ion-col>-->
         </ion-row>
     </ion-grid>
 </ion-content>

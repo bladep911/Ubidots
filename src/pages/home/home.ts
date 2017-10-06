@@ -10,7 +10,7 @@ import {DevicePage} from '../device/device';
 })
 export class HomePage implements OnInit {
 
-    private iotDevices: IoTDevice[][];
+    private iotDevices: IoTDevice[];
 
     constructor(public navCtrl: NavController, public ubiService: UbiServiceProvider) {
 
@@ -24,13 +24,13 @@ export class HomePage implements OnInit {
         );
     }
 
-    private setDevices(devices:IoTDevice[]){
-        this.iotDevices = [];
-        for (let i=0; i<devices.length; i++) {
+    private setDevices(devices:IoTDevice[]): void{
+        this.iotDevices = devices;
+/*        for (let i=0; i<devices.length; i++) {
             let tmp: IoTDevice[] = [devices[i++]];
             if (i < devices.length) tmp.push(devices[i]);
             this.iotDevices.push(tmp);
-        }
+        }*/
     }
 
     selectDevice(selectedDevice): void {
