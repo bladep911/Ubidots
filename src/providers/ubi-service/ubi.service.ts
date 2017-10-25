@@ -6,6 +6,8 @@ import {IoTDevice, IoTVariable} from "../../model";
 import {Observable} from "rxjs/Observable";
 import {Network} from "@ionic-native/network";
 import {Platform} from "ionic-angular";
+import { ToastController } from 'ionic-angular';
+
 
 
 declare var navigator: any;
@@ -26,8 +28,40 @@ export class UbiServiceProvider {
     private devices: IoTDevice[];
     private variables: IoTVariable[];
 
-    constructor( public httpClient: HttpClient, public network: Network, public platform: Platform) {
+    constructor(public httpClient: HttpClient, public network: Network,
+                public platform: Platform, public toastCtrl: ToastController) {
 
+    }
+
+
+    /**
+     * Check the connection status
+     * @returns {Observable<boolean>}
+     */
+    private checkNetwork() {
+        //check connection network state
+        var connected = new Subject<boolean>();
+        this.platform.ready().then(() => {
+            console.log("Network Type: "+ this.network.type);
+            connected.next(this.network.type == 'none');
+            connected.complete();
+        });
+        return connected.asObservable();
+    }
+
+    //TODO: move to a service
+    private showToast(message:string, position: 'bottom') {
+        const toast = this.toastCtrl.create({
+            message: message,
+            duration: 3000,
+            position: 'top'
+        });
+
+        toast.onDidDismiss(() => {
+            console.log('Dismissed toast');
+        });
+
+        toast.present();
     }
 
     /**
@@ -36,13 +70,17 @@ export class UbiServiceProvider {
      * @returtns {Observable<IoTDevice[]>} observable containing the device list
      */
     public getDevices(forceFetch: boolean = false): Observable<IoTDevice[]> {
-        //create observable source
-
+        // source network observer
         var obserNetwork = this.checkNetwork();
+
         return obserNetwork.flatMap(
             connected => {
                 if (connected) {
-                    //if connected try to get update data
+                    // there is network connection => call service
+                    console.log(`## DEVICE GET FROM SERVICE ##`);
+                    return this.loadDevices();
+                } else {
+                    //no connection available => try to get from cache
                     var localData = localStorage.getItem('ubi-devices');
                     if (this.devices != null || localData != null) {
                         if (this.devices == null)
@@ -52,10 +90,6 @@ export class UbiServiceProvider {
                         return Rx.Observable.of(this.devices);
                     }
                     return Rx.Observable.of([]);
-                } else {
-                    // get from cache
-                    console.log(`## DEVICE GET FROM SERVICE ##`);
-                    return this.loadDevices();
                 }
             });
     }
@@ -80,14 +114,6 @@ export class UbiServiceProvider {
         return source.asObservable();
     }
 
-    private checkNetwork() {
-        var connected = new Subject<boolean>();
-        this.platform.ready().then(() => {
-            console.log("Network Type: "+ this.network.type);
-            connected.next(this.network.type == 'none');
-            connected.complete();
-        });
-        return connected.asObservable();
-    }
+
 }
 
